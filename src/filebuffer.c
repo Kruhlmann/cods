@@ -1,4 +1,3 @@
-#include "ttt.h"
 #include <stdio.h>
 #include <stdlib.h>
 
