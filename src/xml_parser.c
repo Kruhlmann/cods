@@ -66,12 +66,12 @@ bool load_xml_document(XMLDocument *document, char *file_path) {
                 }
 
                 if (strcmp(current_node->tag, character_buffer)) {
-                    fprintf(stderr, "Tag mismatch (%s does not match %s)",
+                    fprintf(stderr, "Tag mismatch (%s does not match %s)\n",
                             current_node->tag, character_buffer);
                     return false;
                 }
 
-                current_node - current_node->parent;
+                current_node = current_node->parent;
                 file_contents_index++;
                 continue;
             }
@@ -95,10 +95,10 @@ bool load_xml_document(XMLDocument *document, char *file_path) {
             character_buffer_index = 0;
             file_contents_index++;
             continue;
+        } else {
+            char next_character = file_contents[file_contents_index++];
+            character_buffer[character_buffer_index++] = next_character;
         }
-
-        char next_character = file_contents[file_contents_index++];
-        character_buffer[character_buffer_index] = next_character;
     }
 
     return true;
