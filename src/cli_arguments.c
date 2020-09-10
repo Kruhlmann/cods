@@ -22,17 +22,18 @@ void read_flags_into_configuration(Configuration *config, int arg_count,
     }
 }
 
-Configuration get_default_config() {
-    Configuration default_config;
-    default_config.verbose = CONFIG_DEFAULT_VERBOSE;
-    default_config.to_std_out = CONFIG_DEFAULT_TO_STDOUT;
+Configuration *get_default_config() {
+    Configuration *default_config =
+        (Configuration *)malloc(sizeof(Configuration));
+    default_config->verbose = CONFIG_DEFAULT_VERBOSE;
+    default_config->to_std_out = CONFIG_DEFAULT_TO_STDOUT;
 
     return default_config;
 }
 
-Configuration read_command_line_arguments(int arg_count, char *args[]) {
-    Configuration config = get_default_config();
-    read_flags_into_configuration(&config, arg_count, args);
+Configuration *read_command_line_arguments(int arg_count, char *args[]) {
+    Configuration *config = get_default_config();
+    read_flags_into_configuration(config, arg_count, args);
 
     return config;
 }

@@ -1,1 +1,1 @@
-<root>Hello, World</root>
+<root attribute_double_quote="double_quote" attribute_single_quote='single_quote'>Hello, World</root>

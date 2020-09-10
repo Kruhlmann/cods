@@ -10,6 +10,7 @@ XMLNode *make_xml_node(XMLNode *parent) {
     node->tag = NULL;
     node->contents = NULL;
     node->parent = parent;
+    initialize_xml_attribute_list(&node->attributes_list);
     return node;
 }
 
@@ -20,6 +21,33 @@ void free_xml_node(XMLNode *node) {
     if (node->contents) {
         free(node->contents);
     }
+    for (int i = 0; i < node->attributes_list.length; i++) {
+        free_xml_attribute(&node->attributes_list.attributes[i]);
+    }
+    free(node);
+}
+
+void initialize_xml_attribute_list(XMLAttributeList *attribute_list) {
+    attribute_list->heap_size = 1;
+    attribute_list->length = 0;
+    attribute_list->attributes =
+        (XMLAttribute *)malloc(sizeof(XMLAttribute) * attribute_list->length);
+}
+void add_attribute_to_attribute_list(XMLAttributeList *attribute_list,
+                                     XMLAttribute *attribute) {
+    while (attribute_list->length >= attribute_list->heap_size) {
+        attribute_list->heap_size *= 2;
+        attribute_list->attributes = (XMLAttribute *)realloc(
+            attribute_list->attributes,
+            sizeof(XMLAttribute) * attribute_list->heap_size);
+    }
+
+    attribute_list->attributes[attribute_list->length++] = *attribute;
+}
+
+void free_xml_attribute(XMLAttribute *attribute) {
+    free(attribute->key);
+    free(attribute->value);
 }
 
 bool load_xml_document(XMLDocument *document, char *file_path) {
@@ -81,17 +109,80 @@ bool load_xml_document(XMLDocument *document, char *file_path) {
             } else {
                 current_node = make_xml_node(current_node);
             }
-            file_contents_index++;
 
-            // Tag name
+            // Beginning of tag
+            file_contents_index++;
+            XMLAttribute current_attribute = {0, 0};
             while (file_contents[file_contents_index] != '>') {
                 char next_character = file_contents[file_contents_index++];
                 character_buffer[character_buffer_index++] = next_character;
+
+                bool char_is_space = file_contents[file_contents_index] == ' ';
+                bool no_current_tag = !current_node->tag;
+                // tag name
+                if (char_is_space && no_current_tag) {
+                    character_buffer[character_buffer_index] = '\0';
+                    current_node->tag = strdup(character_buffer);
+                    // Reset character buffer
+                    character_buffer_index = 0;
+                    file_contents_index++;
+                    continue;
+                }
+
+                bool last_char_was_space =
+                    file_contents[file_contents_index - 1] == ' ';
+                // Ignore spaces
+                if (last_char_was_space) {
+                    character_buffer_index--;
+                    continue;
+                }
+
+                bool char_is_equals = file_contents[file_contents_index] == '=';
+                // Attribute key
+                if (char_is_equals) {
+                    character_buffer[character_buffer_index] = '\0';
+                    current_attribute.key = strdup(character_buffer);
+                    character_buffer_index = 0;
+                }
+
+                bool char_is_single_quote =
+                    file_contents[file_contents_index] == '\'';
+                bool char_is_double_quote =
+                    file_contents[file_contents_index] == '\"';
+                // Attribute value
+                if (char_is_single_quote || char_is_double_quote) {
+                    if (!current_attribute.key) {
+                        fprintf(stderr, "Attribute value has no key\n");
+                        return false;
+                    }
+                    char quote = file_contents[file_contents_index];
+
+                    character_buffer_index = 0;
+                    file_contents_index++;
+
+                    while (file_contents[file_contents_index] != quote) {
+                        char next_character =
+                            file_contents[file_contents_index++];
+                        character_buffer[character_buffer_index++] =
+                            next_character;
+                    }
+                    character_buffer[character_buffer_index] = '\0';
+                    current_attribute.value = strdup(character_buffer);
+                    add_attribute_to_attribute_list(
+                        &current_node->attributes_list, &current_attribute);
+                    current_attribute.key = NULL;
+                    current_attribute.value = NULL;
+
+                    character_buffer_index = 0;
+                    file_contents_index++;
+                    continue;
+                }
             }
             character_buffer[character_buffer_index] = '\0';
-            current_node->tag = strdup(character_buffer);
-
-            // Reset character buffer
+            if (!current_node->tag) {
+                current_node->tag = strdup(character_buffer);
+            }
+            // Reset lexer
             character_buffer_index = 0;
             file_contents_index++;
             continue;

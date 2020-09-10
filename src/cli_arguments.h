@@ -19,7 +19,7 @@ static const bool CONFIG_DEFAULT_TO_STDOUT = false;
 
 void read_flags_into_configuration(Configuration *config, int arg_count,
                                    char *args[]);
-Configuration get_default_config();
-Configuration read_command_line_arguments(int arg_count, char *args[]);
+Configuration *get_default_config();
+Configuration *read_command_line_arguments(int arg_count, char *args[]);
 
 #endif
