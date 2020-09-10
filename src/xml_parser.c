@@ -11,7 +11,15 @@ XMLNode *make_xml_node(XMLNode *parent) {
     node->contents = NULL;
     node->parent = parent;
     initialize_xml_attribute_list(&node->attributes_list);
+    initialize_xml_node_list(&node->children);
+    if (parent) {
+        add_node_to_nodelist(&parent->children, node);
+    }
     return node;
+}
+
+XMLNode *get_xml_node_child(XMLNode *parent, int child_index) {
+    return parent->children.nodes[child_index];
 }
 
 void free_xml_node(XMLNode *node) {
@@ -33,16 +41,36 @@ void initialize_xml_attribute_list(XMLAttributeList *attribute_list) {
     attribute_list->attributes =
         (XMLAttribute *)malloc(sizeof(XMLAttribute) * attribute_list->length);
 }
+
 void add_attribute_to_attribute_list(XMLAttributeList *attribute_list,
                                      XMLAttribute *attribute) {
     while (attribute_list->length >= attribute_list->heap_size) {
+        int memory_to_allocate =
+            sizeof(XMLAttribute) * attribute_list->heap_size;
         attribute_list->heap_size *= 2;
         attribute_list->attributes = (XMLAttribute *)realloc(
-            attribute_list->attributes,
-            sizeof(XMLAttribute) * attribute_list->heap_size);
+            attribute_list->attributes, memory_to_allocate);
     }
 
     attribute_list->attributes[attribute_list->length++] = *attribute;
+}
+
+void initialize_xml_node_list(XMLNodeList *node_list) {
+    node_list->heap_size = 1;
+    node_list->length = 0;
+    node_list->nodes =
+        (XMLNode **)malloc(sizeof(XMLNode *) * node_list->length);
+}
+
+void add_node_to_nodelist(XMLNodeList *node_list, XMLNode *node) {
+    while (node_list->length >= node_list->heap_size) {
+        int memory_to_allocate = sizeof(XMLNode *) * node_list->heap_size;
+        node_list->heap_size *= 2;
+        node_list->nodes =
+            (XMLNode **)realloc(node_list->nodes, memory_to_allocate);
+    }
+
+    node_list->nodes[node_list->length++] = node;
 }
 
 void free_xml_attribute(XMLAttribute *attribute) {
@@ -195,6 +223,4 @@ bool load_xml_document(XMLDocument *document, char *file_path) {
     return true;
 }
 
-void unload_xml_document(XMLDocument *document) {
-    free_xml_node(document->root);
-}
+void free_xml_document(XMLDocument *document) { free_xml_node(document->root); }

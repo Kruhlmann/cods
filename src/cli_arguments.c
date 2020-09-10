@@ -5,8 +5,7 @@
 
 void read_flags_into_configuration(Configuration *config, int arg_count,
                                    char *args[]) {
-    size_t i;
-    for (i = 1; i < arg_count && args[i][0] == '-'; i++) {
+    for (long i = 1; i < arg_count && args[i][0] == '-'; i++) {
         switch (args[i][1]) {
         case CLI_FLAG_VERBOSE:
             config->verbose = true;

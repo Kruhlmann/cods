@@ -1,1 +1,6 @@
-<root attribute_double_quote="double_quote" attribute_single_quote='single_quote'>Hello, World</root>
+<root>
+    <child1>
+        <grandchild1>Grandchild</grandchild1>
+    </child1>
+    <child2>Child</child2>
+</root>
