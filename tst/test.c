@@ -1,7 +1,7 @@
 
-#include "cli_arguments.h"
 #include "minunit.h"
 #include "test_xml_parser/test_document_parser.h"
+#include <stdio.h>
 
 int arg_count;
 char **args;
