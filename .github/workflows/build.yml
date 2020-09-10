@@ -10,7 +10,7 @@ on:
 
 jobs:
     build-job:
-        runs-on: gcc-10.2
+        runs-on: ubuntu-latest
         steps:
             - name: Compile program
               run: make
