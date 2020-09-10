@@ -1,0 +1,19 @@
+name: Build cods
+
+on:
+    push:
+        branches:
+            - '*'
+on:
+    pull_request:
+        branches:
+            - '*'
+
+jobs:
+    build-job:
+        runs-on: gcc:10.2
+        steps:
+            - name Compile program
+                run: make
+            - name Run tests
+                run: ./test
