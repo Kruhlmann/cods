@@ -22,7 +22,7 @@ int main(int local_arg_count, char **local_args) {
     char *result = run_all_tests();
 
     if (result != 0) {
-        printf("\e[31mFailed:\e[0m %s\n", result);
+        printf("\x1b[31mFailed:\x1b[0m %s\n", result);
         return 1;
     } else {
         printf("ALL TESTS PASSED\n");
