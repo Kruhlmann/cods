@@ -1,6 +1,0 @@
-<root>
-    <child1>
-        <grandchild1>Grandchild</grandchild1>
-    </child1>
-    <child2>Child</child2>
-</root>

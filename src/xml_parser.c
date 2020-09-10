@@ -91,7 +91,7 @@ bool load_xml_document(XMLDocument *document, char *file_path) {
     int character_buffer_index = 0;
     int file_contents_index = 0;
 
-    XMLNode *current_node = NULL;
+    XMLNode *current_node = document->root;
 
     while (file_contents[file_contents_index] != '\0') {
         if (file_contents[file_contents_index] == '<') {
@@ -132,11 +132,7 @@ bool load_xml_document(XMLDocument *document, char *file_path) {
                 continue;
             }
 
-            if (!current_node) {
-                current_node = document->root;
-            } else {
-                current_node = make_xml_node(current_node);
-            }
+            current_node = make_xml_node(current_node);
 
             // Beginning of tag
             file_contents_index++;

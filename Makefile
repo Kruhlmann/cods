@@ -1,20 +1,33 @@
 CC = gcc
 RM = rm -rf
 
-CXXFLAGS = -Wall -Wextra -O2 -g -ggdb
+CXXFLAGS = -Wall -Wextra -Werror -O2 -g -ggdb -lrt -lm -Iinc/
+CXX_TEST_FLAGS =
 
 SRC = $(wildcard src/*.c)
-OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
-PROGRAM = ttt
+SRC_OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
+TST = $(wildcard tst/*.c)
+TST_OBJ = $(patsubst tst/%.c, tst/%.o, $(TST))
+PROGRAM = test
+
+all: $(PROGRAM)
 
 obj/%.o: src/%.c
 	@mkdir -p $(@D)
 	@$(CC) $(CXXFLAGS) -c -o $@ $<
 
-$(PROGRAM): $(OBJ) Makefile
-	@$(CC) $(CXXFLAGS) -o $@ $(OBJ)
+tst/%.o: tst/%.c $(OBJ)
+	@mkdir -p $(@D)
+	@$(CC) $(CXXFLAGS) -c -o $@ $< $(SRC_OBJ)
+
+$(PROGRAM): $(SRC_OBJ) $(TST_OBJ) Makefile
+	@$(CC) $(CXXFLAGS) -o $@ $(TST_OBJ) $(SRC_OBJ)
+
+compile_commands.json: Makefile
+	@make clean
+	@bear make
 
 clean:
-	@$(RM) $(OBJ) $(PROGRAM)
+	@$(RM) $(SRC_OBJ) $(TST_OBJ) $(PROGRAM)
 
 .PHONY: clean
