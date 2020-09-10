@@ -1,12 +1,11 @@
 CC = gcc
 RM = rm -rf
 
-CXXFLAGS = -Wall -Wextra -Werror -O2 -g -ggdb -lrt -lm -Iinc/
-CXX_TEST_FLAGS =
+CFLAGS = -Wall -Wextra -Wno-unknown-pragmas -pedantic -O2 -g3 -ggdb -I inc/ -I tst/
 
-SRC = $(wildcard src/*.c)
+SRC = $(shell find src/ -type f -name '*.c')
 SRC_OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
-TST = $(wildcard tst/*.c)
+TST = $(shell find tst/ -type f -name '*.c')
 TST_OBJ = $(patsubst tst/%.c, tst/%.o, $(TST))
 PROGRAM = test
 
@@ -14,14 +13,15 @@ all: $(PROGRAM)
 
 obj/%.o: src/%.c
 	@mkdir -p $(@D)
-	@$(CC) $(CXXFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) -c -o $@ $<
 
 tst/%.o: tst/%.c $(OBJ)
+	@echo $(TST)
 	@mkdir -p $(@D)
-	@$(CC) $(CXXFLAGS) -c -o $@ $< $(SRC_OBJ)
+	@$(CC) $(CFLAGS) -c -o $@ $< $(SRC_OBJ)
 
 $(PROGRAM): $(SRC_OBJ) $(TST_OBJ) Makefile
-	@$(CC) $(CXXFLAGS) -o $@ $(TST_OBJ) $(SRC_OBJ)
+	@$(CC) $(XFLAGS) -o $@ $(TST_OBJ) $(SRC_OBJ)
 
 compile_commands.json: Makefile
 	@make clean
