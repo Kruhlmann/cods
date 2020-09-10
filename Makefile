@@ -16,7 +16,6 @@ obj/%.o: src/%.c
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 tst/%.o: tst/%.c $(OBJ)
-	@echo $(TST)
 	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) -c -o $@ $< $(SRC_OBJ)
 
