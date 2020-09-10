@@ -20,7 +20,7 @@ char *create_file_buffer(FILE *file, int file_size, int close_file) {
 char *read_ascii_file(const char *file_path) {
     FILE *file = fopen(file_path, "r");
     if (!file) {
-        printf("Error loading file '%s'\n", file_path);
+        fprintf(stderr, "Error loading file '%s'\n", file_path);
         return NULL;
     }
 

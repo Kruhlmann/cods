@@ -80,7 +80,7 @@ void free_xml_attribute(XMLAttribute *attribute) {
 
 bool load_xml_document(XMLDocument *document, char *file_path) {
     char *file_contents = read_ascii_file(file_path);
-    if (!file_contents) {
+    if (file_contents == NULL) {
         return false;
     }
 
