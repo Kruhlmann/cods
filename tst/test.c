@@ -23,6 +23,7 @@ int main(int local_arg_count, char **local_args) {
 
     if (result != 0) {
         printf("\e[31mFailed:\e[0m %s\n", result);
+        return 1;
     } else {
         printf("ALL TESTS PASSED\n");
     }
