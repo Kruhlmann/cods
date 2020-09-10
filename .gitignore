@@ -1,5 +1,6 @@
 compile_commands.json
 test
+.clangd
 
 obj
 
